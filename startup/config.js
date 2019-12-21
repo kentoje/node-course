@@ -1,3 +1,4 @@
+/*
 const config = require('config');
 
 module.exports = function () {
@@ -5,3 +6,4 @@ module.exports = function () {
     throw new Error('FATAL ERROR: jwtPrivateKey is not defined');
   }
 };
+*/
