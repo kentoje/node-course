@@ -1,6 +1,7 @@
 const request = require('supertest');
 const { User } = require('../../models/users');
 const { Genre } = require('../../models/genres');
+const mongoose = require('mongoose');
 let server;
 
 describe('/api/genres', () => {
@@ -14,22 +15,22 @@ describe('/api/genres', () => {
   describe('GET', () => {
     it('should return all genres', async () => {
       await Genre.collection.insertMany([
-        { name: 'Genre1' },
-        { name: 'Genre2' },
+        { name: 'genre1' },
+        { name: 'genre2' },
       ]);
 
       const res = await request(server).get('/api/genres');
 
       expect(res.status).toBe(200);
       expect(res.body.length).toBe(2);
-      expect(res.body.some(genre => genre.name === 'Genre1')).toBeTruthy();
-      expect(res.body.some(genre => genre.name === 'Genre2')).toBeTruthy();
+      expect(res.body.some(genre => genre.name === 'genre1')).toBeTruthy();
+      expect(res.body.some(genre => genre.name === 'genre2')).toBeTruthy();
     });
   });
 
   describe('GET /:id', () => {
     it('should return a genre if valid id is passed', async () => {
-      const genre = new Genre({ name: 'Genre1' });
+      const genre = new Genre({ name: 'genre1' });
       await genre.save();
 
       const response = await request(server).get(`/api/genres/${genre._id}`);
@@ -41,6 +42,14 @@ describe('/api/genres', () => {
     it('should return 404 if invalid id is passed', async () => {
 
       const response = await request(server).get(`/api/genres/1`);
+
+      expect(response.status).toBe(404);
+    });
+
+    it('should return 404 if no genre with the given id exists', async () => {
+      const id = mongoose.Types.ObjectId();
+
+      const response = await request(server).get(`/api/genres/${id}`);
 
       expect(response.status).toBe(404);
     });
@@ -90,7 +99,7 @@ describe('/api/genres', () => {
 
       await exec();
 
-      const genre = await Genre.find({ name: 'Genre1' });
+      const genre = await Genre.find({ name: 'genre1' });
 
       expect(genre).not.toBeNull();
     });
